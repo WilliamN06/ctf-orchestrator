@@ -1,0 +1,17 @@
+{
+  "name": "ctf-orchestrator",
+  "version": "1.0.0",
+  "description": "Globally-distributed CTF platform on Cloudflare Agents SDK",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "agents": "^0.0.74"
+  },
+  "devDependencies": {
+    "wrangler": "^3.95.0"
+  }
+}

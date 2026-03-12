@@ -1,0 +1,37 @@
+name = "ctf-orchestrator"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+COMPETITION_NAME = "Hack South West 2026"
+
+# Durable Object bindings
+[[durable_objects.bindings]]
+name = "CHALLENGE_AGENT"
+class_name = "ChallengeAgent"
+
+[[durable_objects.bindings]]
+name = "COMPETITION_AGENT"
+class_name = "CompetitionAgent"
+
+[[durable_objects.bindings]]
+name = "HINT_AGENT"
+class_name = "HintAgent"
+
+# SQLite migrations — one per DO class
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ChallengeAgent", "CompetitionAgent", "HintAgent"]
+
+# Workers AI binding
+[ai]
+binding = "AI"
+
+# CORS for local frontend dev
+[dev]
+port = 8787
+
+[[rules]]
+type = "ESModule"
+globs = ["**/*.js"]
