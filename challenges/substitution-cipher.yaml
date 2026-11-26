@@ -1,0 +1,9 @@
+slug: substitution-cipher
+name: Substitution Cipher
+category: crypto
+difficulty: easy
+points: 75
+description: A simple substitution cipher. The message is long enough to crack by frequency.
+flag: CTF{fr3qu3ncy_4nalysis}
+hints:
+- E is the most common letter in English. What's the most common character here?

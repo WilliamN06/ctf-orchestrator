@@ -1,0 +1,12 @@
+slug: rsa-more-like-rsb
+name: RSA? More like RSB
+category: crypto
+difficulty: medium
+points: 250
+description: An RSA implementation with a suspiciously small public exponent. No padding was used in the
+  making of this challenge.
+flag: CTF{sm4ll_e_big_pr0blems}
+hints:
+- What happens when the message is small and e is very small?
+- If m^e < n, you don't even need to reduce mod n.
+- Integer cube root. That's your whole attack.

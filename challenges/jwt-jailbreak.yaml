@@ -1,0 +1,11 @@
+slug: jwt-jailbreak
+name: JWT Jailbreak
+category: web
+difficulty: hard
+points: 300
+description: The admin panel is locked behind a JWT. You have a valid user token. Get admin.
+flag: CTF{alg0rithm_c0nfusion}
+hints:
+- What algorithms does the server accept? It might be more than one.
+- The alg header is user-controlled. What if you set it to none?
+- If RS256 verification falls back to HS256, what key might the server use to verify?

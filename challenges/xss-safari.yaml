@@ -1,0 +1,11 @@
+slug: xss-safari
+name: XSS Safari
+category: web
+difficulty: medium
+points: 200
+description: Find a stored XSS vulnerability and steal the admin's cookie.
+flag: CTF{sc1pt_k1dd13_n0_m0re}
+hints:
+- The input is filtered, but is it filtered everywhere?
+- 'Try different HTML contexts: attributes, event handlers, SVG.'
+- The admin bot visits your submitted URL every 30 seconds.

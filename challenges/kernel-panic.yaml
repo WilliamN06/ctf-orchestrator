@@ -1,0 +1,11 @@
+slug: kernel-panic
+name: Kernel Panic
+category: pwn
+difficulty: insane
+points: 500
+description: Escape the kernel module. Ring 0 awaits. Good luck.
+flag: CTF{r1ng0_0_escape}
+hints:
+- Look for a race condition in the ioctl handler.
+- Consider /proc/self/mem and what you can write to it.
+- SMEP/SMAP are enabled. Think ret2usr alternatives.

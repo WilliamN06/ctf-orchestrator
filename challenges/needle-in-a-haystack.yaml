@@ -1,0 +1,11 @@
+slug: needle-in-a-haystack
+name: Needle in a Haystack
+category: forensics
+difficulty: easy
+points: 150
+description: Something is hidden in this image. It's not just metadata.
+flag: CTF{stegh1de_and_seek}
+hints:
+- The flag isn't in the EXIF data. Look deeper.
+- Steganography tools exist for a reason. Try stegsolve or zsteg.
+- Check the least significant bits of the colour channels.

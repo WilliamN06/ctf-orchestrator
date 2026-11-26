@@ -1,0 +1,12 @@
+slug: buffer-overflow-101
+name: Buffer Overflow 101
+category: pwn
+difficulty: easy
+points: 100
+description: A classic stack-based buffer overflow. Overwrite the return address and redirect execution
+  to win().
+flag: CTF{stack_sm4shed}
+hints:
+- Think carefully about stack layout and what lies beyond your buffer.
+- The win() function is already compiled in, you just need to reach it.
+- Use python -c to craft your payload. How many bytes until you hit the return address?

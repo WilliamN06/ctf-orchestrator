@@ -1,0 +1,11 @@
+slug: reverse-me
+name: Reverse Me
+category: rev
+difficulty: medium
+points: 175
+description: A compiled binary checks your input and tells you if you're right. Find the right input.
+flag: CTF{ghidra_g0d}
+hints:
+- Load it in Ghidra or IDA. Find the string comparison.
+- The check is done byte by byte, it's not hashed.
+- ltrace will show you library calls including strcmp.
