@@ -7,8 +7,13 @@ from ctf.models import Challenge, Solve, Team
 
 def make_challenge(session: Session, slug: str = "c1") -> Challenge:
     ch = Challenge(
-        slug=slug, name="C", category="web", difficulty="easy", points=100,
-        description="d", flag_hash="x",
+        slug=slug,
+        name="C",
+        category="web",
+        difficulty="easy",
+        points=100,
+        description="d",
+        flag_hash="x",
     )
     session.add(ch)
     session.commit()
