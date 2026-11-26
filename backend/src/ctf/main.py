@@ -6,7 +6,7 @@ from sqlmodel import Session
 
 from ctf.config import Settings
 from ctf.db import init_db, make_engine
-from ctf.routes import teams
+from ctf.routes import challenges, teams
 from ctf.seed import load_specs, seed
 
 
@@ -32,6 +32,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(teams.router)
+    app.include_router(challenges.router)
     return app
 
 
