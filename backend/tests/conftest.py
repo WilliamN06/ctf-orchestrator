@@ -29,3 +29,14 @@ def client(app: FastAPI) -> Iterator[TestClient]:
 def session(client: TestClient, app: FastAPI) -> Iterator[Session]:
     with Session(app.state.engine) as s:
         yield s
+
+
+def register(client: TestClient, name: str = "NullPointers") -> dict[str, str]:
+    resp = client.post("/api/teams", json={"name": name, "country": "GB"})
+    assert resp.status_code == 201, resp.text
+    return {"Authorization": f"Bearer {resp.json()['token']}"}
+
+
+@pytest.fixture
+def auth(client: TestClient) -> dict[str, str]:
+    return register(client)
