@@ -7,6 +7,11 @@ def utcnow() -> datetime:
     return datetime.now(UTC)
 
 
+def as_utc(dt: datetime) -> datetime:
+    # SQLite hands datetimes back without tzinfo
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+
+
 class Team(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(unique=True, index=True, max_length=40)

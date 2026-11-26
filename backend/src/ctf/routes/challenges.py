@@ -1,10 +1,29 @@
+import math
+from datetime import timedelta
+
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
-from ctf.deps import SessionDep, TeamDep
-from ctf.models import Challenge, ChallengeView, Hint, HintUnlock, Solve
-from ctf.schemas import ChallengeDetail, ChallengeSummary, UnlockedHint
+from ctf.deps import SessionDep, SettingsDep, TeamDep
+from ctf.models import (
+    Attempt,
+    Challenge,
+    ChallengeView,
+    Hint,
+    HintUnlock,
+    Solve,
+    as_utc,
+    utcnow,
+)
+from ctf.schemas import (
+    ChallengeDetail,
+    ChallengeSummary,
+    FlagResult,
+    FlagSubmit,
+    UnlockedHint,
+)
+from ctf.security import check_flag
 
 router = APIRouter(prefix="/api/challenges", tags=["challenges"])
 
@@ -79,3 +98,51 @@ def challenge_detail(slug: str, session: SessionDep, team: TeamDep) -> Challenge
             for h, u in unlocked
         ],
     )
+
+
+def _throttle(session: Session, team_id: int, challenge_id: int, limit: int, window: int) -> None:
+    now = utcnow()
+    recent = session.exec(
+        select(Attempt.created_at)
+        .where(
+            col(Attempt.team_id) == team_id,
+            col(Attempt.challenge_id) == challenge_id,
+            col(Attempt.created_at) > now - timedelta(seconds=window),
+        )
+        .order_by(col(Attempt.created_at))
+    ).all()
+    if len(recent) >= limit:
+        oldest = as_utc(recent[0])
+        retry_after = max(1, math.ceil((oldest + timedelta(seconds=window) - now).total_seconds()))
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            "Too many attempts, slow down",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+
+@router.post("/{slug}/submit")
+def submit_flag(
+    slug: str, body: FlagSubmit, session: SessionDep, team: TeamDep, settings: SettingsDep
+) -> FlagResult:
+    ch = get_challenge(session, slug)
+    assert ch.id is not None and team.id is not None
+
+    _throttle(session, team.id, ch.id, settings.submit_limit, settings.submit_window_seconds)
+
+    correct = check_flag(settings.flag_secret, body.flag, ch.flag_hash)
+    session.add(Attempt(team_id=team.id, challenge_id=ch.id, correct=correct))
+
+    if not correct:
+        session.commit()
+        return FlagResult(correct=False)
+
+    if session.get(Solve, (team.id, ch.id)) is not None:
+        session.commit()
+        return FlagResult(correct=True, already_solved=True)
+
+    earlier = session.exec(select(Solve).where(col(Solve.challenge_id) == ch.id)).first()
+    first_blood = earlier is None
+    session.add(Solve(team_id=team.id, challenge_id=ch.id, first_blood=first_blood))
+    session.commit()
+    return FlagResult(correct=True, first_blood=first_blood, points=ch.points)
