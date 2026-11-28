@@ -1,7 +1,7 @@
 import math
 from datetime import timedelta
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, status
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
@@ -123,7 +123,13 @@ def _throttle(session: Session, team_id: int, challenge_id: int, limit: int, win
 
 @router.post("/{slug}/submit")
 def submit_flag(
-    slug: str, body: FlagSubmit, session: SessionDep, team: TeamDep, settings: SettingsDep
+    slug: str,
+    body: FlagSubmit,
+    session: SessionDep,
+    team: TeamDep,
+    settings: SettingsDep,
+    request: Request,
+    background: BackgroundTasks,
 ) -> FlagResult:
     ch = get_challenge(session, slug)
     assert ch.id is not None and team.id is not None
@@ -145,4 +151,5 @@ def submit_flag(
     first_blood = earlier is None
     session.add(Solve(team_id=team.id, challenge_id=ch.id, first_blood=first_blood))
     session.commit()
+    background.add_task(request.app.state.broadcaster.send_scoreboard, request.app.state.engine)
     return FlagResult(correct=True, first_blood=first_blood, points=ch.points)

@@ -6,7 +6,8 @@ from sqlmodel import Session
 
 from ctf.config import Settings
 from ctf.db import init_db, make_engine
-from ctf.routes import challenges, scoreboard, teams
+from ctf.realtime import Broadcaster
+from ctf.routes import challenges, live, scoreboard, teams
 from ctf.seed import load_specs, seed
 
 
@@ -26,6 +27,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title="CTF Orchestrator", lifespan=lifespan)
     app.state.settings = settings
     app.state.engine = make_engine(settings.database_url)
+    app.state.broadcaster = Broadcaster()
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
@@ -34,6 +36,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(teams.router)
     app.include_router(challenges.router)
     app.include_router(scoreboard.router)
+    app.include_router(live.router)
     return app
 
 
