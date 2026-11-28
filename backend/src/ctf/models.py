@@ -77,3 +77,8 @@ class ChatMessage(SQLModel, table=True):
     action: str | None = None
     guard_blocked: bool = False
     created_at: datetime = Field(default_factory=utcnow)
+
+
+class Competition(SQLModel, table=True):
+    id: int = Field(default=1, primary_key=True)
+    is_open: bool = True

@@ -61,3 +61,24 @@ class ScoreboardEntry(BaseModel):
     score: int
     solves: int
     last_solve: datetime | None
+
+
+class CompetitionState(BaseModel):
+    is_open: bool
+
+
+class ChallengeStats(BaseModel):
+    slug: str
+    attempts: int
+    wrong_attempts: int
+    solves: int
+    first_blood_team: str | None
+    hint_unlocks: int
+    chat_messages: int
+    guard_blocks: int
+
+
+class AdminTeam(TeamPublic):
+    created_at: datetime
+    score: int
+    solves: int

@@ -1,11 +1,11 @@
 import math
 from datetime import timedelta
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
-from ctf.deps import SessionDep, SettingsDep, TeamDep
+from ctf.deps import SessionDep, SettingsDep, TeamDep, require_open
 from ctf.models import (
     Attempt,
     Challenge,
@@ -121,7 +121,7 @@ def _throttle(session: Session, team_id: int, challenge_id: int, limit: int, win
         )
 
 
-@router.post("/{slug}/submit")
+@router.post("/{slug}/submit", dependencies=[Depends(require_open)])
 def submit_flag(
     slug: str,
     body: FlagSubmit,
